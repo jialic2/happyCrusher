@@ -1,0 +1,23 @@
+setup: 
+	Players 的 名字
+	board 8*8 的元素
+	决定谁先来
+/*
+update: 
+draw: 
+*/
+
+while (双方存活) {
+	Round:
+	0. shield = false
+	1. 判断有没有可以打的combo
+	2. 没有的话，刷新界面，直到有，然后到3
+	3. Person作出move
+	4. 判断有没有效，无效回到3，有效到5
+	while (有combo) {
+		5. 检查board，结算所有combo，若有炸弹，记录炸弹位置，并到6
+		6. 炸弹爆炸，结算combo
+	}
+	7. 结算伤害，回复，怒气，更新shield，如果一方死亡，游戏结束，清空伤害数组
+	8. swap 攻击一方和防守一方
+}

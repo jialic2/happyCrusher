@@ -6,8 +6,12 @@ using namespace std;
 class Person {
 	int hp;
 	int mp;
-	bool hasShield;
-	string name;
 public:
+	bool hasShield;
 	Person(string);
+	int getHp();
+	void setHp(int);
+	int getMp();
+	void setMp(int);
+	string name;
 };

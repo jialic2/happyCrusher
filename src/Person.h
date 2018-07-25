@@ -8,6 +8,7 @@ class Person {
 	int mp;
 public:
 	bool hasShield;
+	Person();
 	Person(string);
 	int getHp();
 	void setHp(int);

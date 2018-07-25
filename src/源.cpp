@@ -96,7 +96,7 @@ bool can_make_move(vector<vector<int>> board) { // this line should be commented
 	return false;
 }
 
-void cancel() {
+bool cancel() {
 	int board[8][8];
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -117,6 +117,12 @@ void cancel() {
 			}
 		}
 	}
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (board[i][j] == Void) return true;
+		}
+	}
+	return false;
 }
 
 void fall() {

@@ -22,6 +22,7 @@ class GameBoard {
 	void construct_board();
 	void initialize_players();
 	bool can_make_move();
+	void Fall();
 
 public:
 	

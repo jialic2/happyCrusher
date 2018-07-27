@@ -192,3 +192,16 @@ void GameBoard::play_one_round() {
 
 	//after that, reset counts
 }
+
+void fall() {
+	for (int j = 0; j < 8; j++) {
+		for (int i = 7; i > 0; i--) {
+			if (board[i][j] == Void) {
+				for (int k = i - 1; k >= 0; k--) {
+					board[k + 1][j] = board[k][j];
+					board[k][j] = Void;
+				}
+			}
+		}
+	}
+}

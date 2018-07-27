@@ -205,3 +205,22 @@ void fall() {
 		}
 	}
 }
+
+void GameBoard::generate_elements() {
+	vector<vector<bool>> temp;
+	for (int i = 0; i < 8; i++) {
+		vector<int> vec;
+		for (int j = 0; j < 8; j++) {
+			vec.push_back(false);
+		}
+		temp.push_back(vec);
+	}
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (board[i][j] == Void) {
+				board[i][j] = randomElement();
+				temp[i][j] = true;
+			}
+		}
+	}
+}

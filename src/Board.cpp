@@ -187,10 +187,10 @@ bool GameBoard::cancel() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (board[i][j] == 8) {
-				for (int posi = max(0, i - 1); posi < min(8, i + 2); posi++) {
-					for (int posj = max(0, j - 1); posj < min(8, j + 2); posj++) {
+				for (int posi = max(0, i - 1); posi <= min(7, i + 1); posi++) {
+					for (int posj = max(0, j - 1); posj <= min(7, j + 1); posj++) {
 						if (board[posi][posj] == Void) continue;
-						counts[board[posi][posj]]++;
+						if (board[posi][posj] != Bomb) counts[board[posi][posj]]++;
 						board[posi][posj] = Void;
 					}
 				}

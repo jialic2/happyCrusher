@@ -13,6 +13,10 @@ void ofApp::update(){
 		while (hasCancelledSth) {
 			hasCancelledSth = current_board.cancel();
 			current_board.fall();
+			// bomb
+			if (current_board.trigger_cancelation()) {
+				current_board.fall();
+			}
 			current_board.generate_elements();
 			//cancel
 			//deduct health at the same time, check if either player is dead

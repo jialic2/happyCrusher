@@ -25,6 +25,7 @@ class GameBoard {
 	int randomElement();
 	void initialize_players();
 	bool has_bomb(int x_index, int y_index);
+	void cancel_helper(int x_index, int y_index);
 
 public:
 
@@ -43,4 +44,5 @@ public:
 	void generate_elements();
 	void display_result();
 	void switch_blocks();
+	bool trigger_cancelation();
 };

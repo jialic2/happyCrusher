@@ -186,16 +186,9 @@ bool GameBoard::cancel() {
 	}
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			if (board[i][j] == 8) {
-				for (int posi = max(0, i - 1); posi <= min(7, i + 1); posi++) {
-					for (int posj = max(0, j - 1); posj <= min(7, j + 1); posj++) {
-						if (board[posi][posj] == Void) continue;
-						if (board[posi][posj] != Bomb) counts[board[posi][posj]]++;
-						board[posi][posj] = Void;
-					}
-				}
-			}
-		}
+			if (board[i][j] == Void) continue;
+			cancel_helper(i, j);
+ 		}
 	}
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -260,7 +253,7 @@ bool GameBoard::has_bomb(int x_index, int y_index) {
 			break;
 		}
 	}
-	if (count_x_direction > 2) {
+	/*if (count_x_direction > 2) {
 		for (int pos = x_index - 1; pos >= 0; pos--) {
 			if (board[pos][y_index] == board[x_index][y_index]) {
 				counts[board[pos][y_index]]++;
@@ -291,32 +284,53 @@ bool GameBoard::has_bomb(int x_index, int y_index) {
 			}
 			else break;
 		}
-	}
-	if (count_x_direction > 2 || count_y_direction > 2) {
+	}*/
+	/*if (count_x_direction > 2 || count_y_direction > 2) {
 		counts[board[x_index][y_index]]++;
 		board[x_index][y_index] = Void;
+	}*/
+	if ((count_x_direction > 2 && count_y_direction > 2) || count_x_direction > 4 || count_y_direction > 4) {
+		if (count_x_direction > 2) {
+			for (int pos = x_index - 1; pos >= 0; pos--) {
+				if (board[pos][y_index] == board[x_index][y_index]) {
+					counts[board[pos][y_index]]++;
+					board[pos][y_index] = Void;
+				}
+				else break;
+			}
+			for (int pos = x_index + 1; pos < 8; pos++) {
+				if (board[pos][y_index] == board[x_index][y_index]) {
+					counts[board[pos][y_index]]++;
+					board[pos][y_index] = Void;
+				}
+				else break;
+			}
+		}
+		if (count_y_direction > 2) {
+			for (int pos = y_index - 1; pos >= 0; pos--) {
+				if (board[x_index][pos] == board[x_index][y_index]) {
+					counts[board[x_index][pos]]++;
+					board[x_index][pos] = Void;
+				}
+				else break;
+			}
+			for (int pos = y_index + 1; pos < 8; pos++) {
+				if (board[x_index][pos] == board[x_index][y_index]) {
+					counts[board[x_index][pos]]++;
+					board[x_index][pos] = Void;
+				}
+				else break;
+			}
+		}
 	}
 	return (count_x_direction > 2 && count_y_direction > 2) || count_x_direction > 4 || count_y_direction > 4;
 }
 
+bool GameBoard::fall_helper() {
+
+}
+
 void GameBoard::fall() {
-	/*for (int j = 0; j < 8; j++) {
-		int numVoid = 0;
-		for (int i = 7; i >= 0; i--) {
-			if (board[i][j] == Void) numVoid++;
-		}
-		for (int i = 7; i > 0; i--) {
-			if (numVoid == 0) break;
-			if (board[i][j] == Void) {
-				numVoid--;
-				for (int k = i - 1; k >= 0; k--) {
-					board[k + 1][j] = board[k][j];
-					board[k][j] = Void;
-				}
-				if (board[i][j] == Void) i++;
-			}
-		}
-	}*/
 	for (int j = 0; j < 8; j++) {
 		int numVoid = 0;
 		for (int i = 7; i >= 0; i--) {
@@ -334,6 +348,14 @@ void GameBoard::fall() {
 			}
 		}
 	}
+	/*int toBe[8];
+	for (int j = 0; j < 8; j++) {
+		for (int i = 7; i >= 0; i--) {
+			if (board[i][j] == Void) toBe[j]++;
+		}
+	}
+	int max = 0;
+	for (int i : toBe) max = */
 }
 
 void GameBoard::update_damage() {
@@ -413,3 +435,116 @@ void GameBoard::switch_blocks() {
 	board[x_index2][y_index2] = temp;
 	x_index1 = -1;
 }
+
+void GameBoard::cancel_helper(int x_index, int y_index) {
+	int count_x_direction = 0;
+	int count_y_direction = 0;
+	for (int x1 = x_index; x1 < x_index + 3; x1++) {
+		if (x1 < 8 && x1 >= 0) {
+			if (board[x1][y_index] == board[x_index][y_index]) {
+				count_x_direction++;
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			break;
+		}
+	}
+	for (int x1 = x_index - 1; x1 > x_index - 3; x1--) {
+		if (x1 < 8 && x1 >= 0) {
+			if (board[x1][y_index] == board[x_index][y_index]) {
+				count_x_direction++;
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			break;
+		}
+	}
+	for (int y1 = y_index; y1 < y_index + 3; y1++) {
+		if (y1 < 8 && y1 >= 0) {
+			if (board[x_index][y1] == board[x_index][y_index]) {
+				count_y_direction++;
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			break;
+		}
+	}
+	for (int y1 = y_index - 1; y1 > y_index - 3; y1--) {
+		if (y1 < 8 && y1 >= 0) {
+			if (board[x_index][y1] == board[x_index][y_index]) {
+				count_y_direction++;
+			}
+			else {
+				break;
+			}
+		}
+		else {
+			break;
+		}
+	}
+	if (count_x_direction > 2) {
+		for (int pos = x_index - 1; pos >= 0; pos--) {
+			if (board[pos][y_index] == board[x_index][y_index]) {
+				counts[board[pos][y_index]]++;
+				board[pos][y_index] = Void;
+			}
+		else break;
+	}
+		for (int pos = x_index + 1; pos < 8; pos++) {
+			if (board[pos][y_index] == board[x_index][y_index]) {
+				counts[board[pos][y_index]]++;
+				board[pos][y_index] = Void;
+			}
+			else break;
+		}
+	}
+	if ((count_y_direction > 2)) {
+		for (int pos = y_index - 1; pos >= 0; pos--) {
+			if (board[x_index][pos] == board[x_index][y_index]) {
+				counts[board[x_index][pos]]++;
+				board[x_index][pos] = Void;
+			}
+		else break;
+		}
+		for (int pos = y_index + 1; pos < 8; pos++) {
+			if (board[x_index][pos] == board[x_index][y_index]) {
+				counts[board[x_index][pos]]++;
+				board[x_index][pos] = Void;
+			}
+			else break;
+		}
+	}
+	if (count_x_direction > 2 || count_y_direction > 2) {
+		counts[board[x_index][y_index]]++;
+		board[x_index][y_index] = Void;
+	}
+}
+
+bool GameBoard::trigger_cancelation() {
+	bool result = false;
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (board[i][j] == Bomb) {
+				result = true;
+				for (int posi = max(0, i - 1); posi <= min(7, i + 1); posi++) {
+					for (int posj = max(0, j - 1); posj <= min(7, j + 1); posj++) {
+						if (board[posi][posj] == Void) continue;
+						if (board[posi][posj] != Bomb) counts[board[posi][posj]]++;
+						board[posi][posj] = Void;
+					}
+				}
+			}
+		}
+	}
+	return result;
+}
+

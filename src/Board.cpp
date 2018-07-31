@@ -290,33 +290,37 @@ bool GameBoard::has_bomb(int x_index, int y_index) {
 		board[x_index][y_index] = Void;
 	}*/
 	if ((count_x_direction > 2 && count_y_direction > 2) || count_x_direction > 4 || count_y_direction > 4) {
-		for (int pos = x_index - 1; pos >= 0; pos--) {
-			if (board[pos][y_index] == board[x_index][y_index]) {
-				counts[board[pos][y_index]]++;
-				board[pos][y_index] = Void;
+		if (count_x_direction > 2) {
+			for (int pos = x_index - 1; pos >= 0; pos--) {
+				if (board[pos][y_index] == board[x_index][y_index]) {
+					counts[board[pos][y_index]]++;
+					board[pos][y_index] = Void;
+				}
+				else break;
 			}
-			else break;
+			for (int pos = x_index + 1; pos < 8; pos++) {
+				if (board[pos][y_index] == board[x_index][y_index]) {
+					counts[board[pos][y_index]]++;
+					board[pos][y_index] = Void;
+				}
+				else break;
+			}
 		}
-		for (int pos = x_index + 1; pos < 8; pos++) {
-			if (board[pos][y_index] == board[x_index][y_index]) {
-				counts[board[pos][y_index]]++;
-				board[pos][y_index] = Void;
+		if (count_y_direction > 2) {
+			for (int pos = y_index - 1; pos >= 0; pos--) {
+				if (board[x_index][pos] == board[x_index][y_index]) {
+					counts[board[x_index][pos]]++;
+					board[x_index][pos] = Void;
+				}
+				else break;
 			}
-			else break;
-		}
-		for (int pos = y_index - 1; pos >= 0; pos--) {
-			if (board[x_index][pos] == board[x_index][y_index]) {
-				counts[board[x_index][pos]]++;
-				board[x_index][pos] = Void;
+			for (int pos = y_index + 1; pos < 8; pos++) {
+				if (board[x_index][pos] == board[x_index][y_index]) {
+					counts[board[x_index][pos]]++;
+					board[x_index][pos] = Void;
+				}
+				else break;
 			}
-			else break;
-		}
-		for (int pos = y_index + 1; pos < 8; pos++) {
-			if (board[x_index][pos] == board[x_index][y_index]) {
-				counts[board[x_index][pos]]++;
-				board[x_index][pos] = Void;
-			}
-			else break;
 		}
 	}
 	return (count_x_direction > 2 && count_y_direction > 2) || count_x_direction > 4 || count_y_direction > 4;
@@ -340,20 +344,30 @@ void GameBoard::fall() {
 			}
 		}
 	}*/
+	int toBe[8];
 	for (int j = 0; j < 8; j++) {
-		int numVoid = 0;
 		for (int i = 7; i >= 0; i--) {
-			if (board[i][j] == Void) numVoid++;
+			if (board[i][j] == Void) toBe[j]++;
 		}
-		for (int i = 7; i > 0; i--) {
-			if (numVoid == 0) break;
-			if (board[i][j] == Void) {
-				numVoid--;
-				for (int k = i - 1; k >= 0; k--) {
-					board[k + 1][j] = board[k][j];
-					board[k][j] = Void;
+	}
+	int max = 0;
+	for (int i : toBe) max = (i > max) ? i : max;
+	while (max > 0) {
+		max--;
+		for (int j = 0; j < 8; j++) {
+			if (toBe[j] == 0) continue;
+			else {
+				toBe[j]--;
+				for (int i = 7; i > 0; i++) {
+					if (board[i][j] == Void) {
+						for (int k = i - 1; k >= 0; k--) {
+							board[k + 1][j] = board[k][j];
+							board[k][j] = Void;
+						}
+						//if (board[i][j] == Void) i++;
+						break;
+					}
 				}
-				if (board[i][j] == Void) i++;
 			}
 		}
 	}
@@ -548,3 +562,4 @@ bool GameBoard::trigger_cancelation() {
 	}
 	return result;
 }
+

@@ -326,12 +326,8 @@ bool GameBoard::has_bomb(int x_index, int y_index) {
 	return (count_x_direction > 2 && count_y_direction > 2) || count_x_direction > 4 || count_y_direction > 4;
 }
 
-bool GameBoard::fall_helper() {
-
-}
-
 void GameBoard::fall() {
-	for (int j = 0; j < 8; j++) {
+	/*for (int j = 0; j < 8; j++) {
 		int numVoid = 0;
 		for (int i = 7; i >= 0; i--) {
 			if (board[i][j] == Void) numVoid++;
@@ -347,15 +343,34 @@ void GameBoard::fall() {
 				if (board[i][j] == Void) i++;
 			}
 		}
-	}
-	/*int toBe[8];
+	}*/
+	int toBe[8];
 	for (int j = 0; j < 8; j++) {
 		for (int i = 7; i >= 0; i--) {
 			if (board[i][j] == Void) toBe[j]++;
 		}
 	}
 	int max = 0;
-	for (int i : toBe) max = */
+	for (int i : toBe) max = (i > max) ? i : max;
+	while (max > 0) {
+		max--;
+		for (int j = 0; j < 8; j++) {
+			if (toBe[j] == 0) continue;
+			else {
+				toBe[j]--;
+				for (int i = 7; i > 0; i++) {
+					if (board[i][j] == Void) {
+						for (int k = i - 1; k >= 0; k--) {
+							board[k + 1][j] = board[k][j];
+							board[k][j] = Void;
+						}
+						//if (board[i][j] == Void) i++;
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 void GameBoard::update_damage() {

@@ -345,9 +345,15 @@ void GameBoard::fall() {
 		}
 	}*/
 	int toBe[8];
+	int pos[8];
+	for (int i : pos) i = 7;
+	//list<int> toBeHelper[8];
 	for (int j = 0; j < 8; j++) {
 		for (int i = 7; i >= 0; i--) {
-			if (board[i][j] == Void) toBe[j]++;
+			if (board[i][j] == Void) { 
+				toBe[j]++; 
+				//toBeHelper[j].push_back(i);
+			}
 		}
 	}
 	int max = 0;
@@ -358,13 +364,13 @@ void GameBoard::fall() {
 			if (toBe[j] == 0) continue;
 			else {
 				toBe[j]--;
-				for (int i = 7; i > 0; i++) {
-					if (board[i][j] == Void) {
-						for (int k = i - 1; k >= 0; k--) {
+				while (pos[j] > 0) {
+					if (board[pos[j]][j] == Void) {
+						for (int k = pos[j] - 1; k >= 0; k--) {
 							board[k + 1][j] = board[k][j];
 							board[k][j] = Void;
 						}
-						//if (board[i][j] == Void) i++;
+						if (board[pos[j][j]] != Void) pos[j]--;
 						break;
 					}
 				}

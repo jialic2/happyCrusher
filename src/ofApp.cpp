@@ -8,9 +8,31 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	if (current_state == In_Progress) {
+	if (current_state == Cancel) {
+		cancel_counter--;
+		if (cancel_counter == 0) {
+			current_state = Fall;
+			cancel_counter = 15;
+		}
+	}
+	else if (current_state == Fall) {
+		current_board.fall();
+		current_board.generate_elements();
+		current_board.update_damage();
+		current_state = In_Progress;
+	}
+	else if (current_state == In_Progress) {
+		current_board.draw_board = current_board.board;
+		bool has_cancelled_sth = current_board.trigger_cancelation();
+		has_cancelled_sth = has_cancelled_sth || current_board.cancel();
+		if (has_cancelled_sth) {
+			current_state = Cancel;
+			return;
+		}
+		/*
 		bool hasCancelledSth = true;
 		while (hasCancelledSth) {
+			current_board.draw_board = current_board.board;
 			hasCancelledSth = current_board.cancel();
 			current_board.fall();
 			// bomb
@@ -22,6 +44,7 @@ void ofApp::update(){
 			//cancel
 			//deduct health at the same time, check if either player is dead
 		}
+		*/
 		//display end of round: damage, shield,...
 		current_board.make_damage();
 		if (current_board.either_is_dead()) { //if one player is dead
@@ -37,6 +60,7 @@ void ofApp::update(){
 		//TO-DO: ¶¯»­Ð§¹û
 		while (!current_board.can_make_move()) {
 			current_board.construct_board();
+			current_board.draw_board = current_board.board;
 		}
 	}
 	else if (current_state == Selecting_Indices) {
@@ -59,7 +83,7 @@ void ofApp::update(){
 			}
 			else {
 				switch_flag = true;
-				switch_counter = 20;
+				switch_counter = 15;
 				current_board.switch_blocks();
 			}
 		}
@@ -69,14 +93,15 @@ void ofApp::update(){
 			}
 			else {
 				switch_flag = false;
-				switch_counter = 20;
-				current_state = In_Progress;
+				switch_counter = 15;
+				current_state = Cancel;
 			}
 		}
 	}
 	else if (current_state == Result) {
 		//display result
 		current_board.display_result();
+		cin.get();
 	}
 }
 
@@ -88,6 +113,9 @@ void ofApp::draw(){
 	}
 	else if (current_state == Switch) {
 		drawSwitch();
+	}
+	else if (current_state == Cancel) {
+		drawCancel();
 	}
 	//draw board
 	//draw players + info
@@ -135,18 +163,18 @@ void ofApp::drawSwitch() {
 	if (current_board.is_horizontal_ajacent) {
 		if (!switch_flag) {
 			int left = min(temp_y1, temp_y2) * 60 + 260;
-			int width = 3 * (20 - switch_counter);
+			int width = 4 * (15 - switch_counter);
 			int up = 260 + temp_x1 * 60;
-			ofSetHexColor(0xffffff);
+			ofSetHexColor(0xEEEEE0);
 			ofDrawRectangle(left, up, width, 60);
 			left += 60 + 60 - width;
 			ofDrawRectangle(left, up, width, 60);
 		}
 		else {
 			int left = min(temp_y1, temp_y2) * 60 + 260;
-			int width = 3 * switch_counter;
+			int width = 4 * switch_counter;
 			int up = 260 + temp_x1 * 60;
-			ofSetHexColor(0xffffff);
+			ofSetHexColor(0xEEEEE0);
 			ofDrawRectangle(left, up, width, 60);
 			left += 60 + 60 - width;
 			ofDrawRectangle(left, up, width, 60);
@@ -155,30 +183,43 @@ void ofApp::drawSwitch() {
 	else {
 		if (!switch_flag) {
 			int up = min(temp_x1, temp_x2) * 60 + 260;
-			int height = 3 * (20 - switch_counter);
+			int height = 4 * (15 - switch_counter);
 			int left = 260 + temp_y1 * 60;
-			ofSetHexColor(0xffffff);
+			ofSetHexColor(0xEEEEE0);
 			ofDrawRectangle(left, up, 60, height);
 			up += 60 + 60 - height;
 			ofDrawRectangle(left, up, 60, height);
 		}
 		else {
 			int up = min(temp_x1, temp_x2) * 60 + 260;
-			int height = 3 * switch_counter;
+			int height = 4 * switch_counter;
 			int left = 260 + temp_y1 * 60;
-			ofSetHexColor(0xffffff);
+			ofSetHexColor(0xEEEEE0);
 			ofDrawRectangle(left, up, 60, height);
 			up += 60 + 60 - height;
 			ofDrawRectangle(left, up, 60, height);
 		}
 	}
 }
-void ofApp::drawCancel() {
 
+void ofApp::drawCancel() {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (current_board.board[i][j] == Void) {
+				ofSetHexColor(colors[current_board.draw_board[i][j]]);
+				ofDrawRectangle(260 + j * 60 + 30 - 2 * cancel_counter,
+					260 + i * 60 + 30 - 2 * cancel_counter,
+					4 * cancel_counter,
+					4 * cancel_counter);
+			}
+		}
+	}
 }
+
 void ofApp::drawFall() {
 
 }
+
 void ofApp::drawBoard() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {

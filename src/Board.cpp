@@ -8,7 +8,7 @@ int GameBoard::randomElement() {
 
 GameBoard::GameBoard() {
 	construct_board();
-	construct_drawBoard();
+	construct_draw_board();
 	initialize_players();
 }
 
@@ -43,13 +43,13 @@ void GameBoard::construct_board() {
 	}
 }
 
-void GameBoard::construct_drawBoard() {
+void GameBoard::construct_draw_board() {
 	vector<int> current;
 	for (int i = 0; i < 8; i++) {
 		current.push_back(0);
 	}
 	for (int i = 0; i < 8; i++) {
-		drawBoard.push_back(current);
+		draw_board.push_back(current);
 	}
 }
 
@@ -191,7 +191,6 @@ void GameBoard::switch_players() {
 }
 
 bool GameBoard::cancel() {
-	drawBoard = Board;
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (board[i][j] == Void) continue;
@@ -418,6 +417,12 @@ void GameBoard::update_damage() {
 }
 
 bool GameBoard::either_is_dead() {
+	if (first_player->getHp() <= 0) {
+		loser = first_player;
+	}
+	if (second_player->getHp() <= 0) {
+		loser = second_player;
+	}
 	return first_player->getHp() <= 0 || second_player->getHp() <= 0;
 }
 
@@ -440,8 +445,7 @@ void GameBoard::make_damage() {
 
 void GameBoard::display_result() {
 	loser->setHp(0);
-	cout << "loser is " << (loser == first_player) ? "first player" : "second player";
-	cout << endl;
+	cout << "loser is " << ((loser == first_player) ? "first player" : "second player") << endl;
 }
 
 void GameBoard::generate_elements() {

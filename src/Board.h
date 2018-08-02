@@ -22,7 +22,7 @@ class GameBoard {
 	int damage = 0;
 
 	vector<int> counts = {0, 0, 0, 0, 0, 0, 0, 0};
-
+	
 	int randomElement();
 	void initialize_players();
 	bool has_bomb(int x_index, int y_index);
@@ -36,8 +36,10 @@ public:
 	bool cancel();
 	void fall();
 	vector<vector<int>> board;
+	vector<vector<int>> drawBoard;
 	GameBoard();
 	void construct_board();
+	void construct_drawBoard();
 	bool isBigEnough(int x_index, int y_index);
 	bool receive_indices(int x_index, int y_index);
 	void switch_players();

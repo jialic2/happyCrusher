@@ -8,6 +8,7 @@ int GameBoard::randomElement() {
 
 GameBoard::GameBoard() {
 	construct_board();
+	construct_drawBoard();
 	initialize_players();
 }
 
@@ -39,6 +40,16 @@ void GameBoard::construct_board() {
 				board[i][j] = randomElement();
 			}
 		}
+	}
+}
+
+void GameBoard::construct_drawBoard() {
+	vector<int> current;
+	for (int i = 0; i < 8; i++) {
+		current.push_back(0);
+	}
+	for (int i = 0; i < 8; i++) {
+		drawBoard.push_back(current);
 	}
 }
 
@@ -180,6 +191,7 @@ void GameBoard::switch_players() {
 }
 
 bool GameBoard::cancel() {
+	drawBoard = Board;
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (board[i][j] == Void) continue;

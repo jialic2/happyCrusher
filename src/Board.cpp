@@ -8,6 +8,7 @@ int GameBoard::randomElement() {
 
 GameBoard::GameBoard() {
 	construct_board();
+	construct_draw_board();
 	initialize_players();
 }
 
@@ -39,6 +40,16 @@ void GameBoard::construct_board() {
 				board[i][j] = randomElement();
 			}
 		}
+	}
+}
+
+void GameBoard::construct_draw_board() {
+	vector<int> current;
+	for (int i = 0; i < 8; i++) {
+		current.push_back(0);
+	}
+	for (int i = 0; i < 8; i++) {
+		draw_board.push_back(current);
 	}
 }
 
@@ -162,11 +173,13 @@ bool GameBoard::receive_indices(int x_index, int y_index) {
 			//two blocks are ajacent
 			x_index2 = x_index;
 			y_index2 = y_index;
+			is_horizontal_ajacent = x_index1 == x_index2;
 			return true;
 		}
 		else {
 			x_index1 = x_index;
 			y_index1 = y_index;
+			x_index2 = -1;
 			return false;
 		}
 	}
@@ -181,14 +194,17 @@ bool GameBoard::cancel() {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (board[i][j] == Void) continue;
-			if (has_bomb(i, j)) board[i][j] = Bomb;
+			if (has_bomb(i, j)) { 
+				counts[board[i][j]]++;
+				board[i][j] = Bomb;
+			}
 		}
 	}
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (board[i][j] == Void) continue;
 			cancel_helper(i, j);
- 		}
+		}
 	}
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
@@ -254,40 +270,40 @@ bool GameBoard::has_bomb(int x_index, int y_index) {
 		}
 	}
 	/*if (count_x_direction > 2) {
-		for (int pos = x_index - 1; pos >= 0; pos--) {
-			if (board[pos][y_index] == board[x_index][y_index]) {
-				counts[board[pos][y_index]]++;
-				board[pos][y_index] = Void;
-			}
-			else break;
-		}
-		for (int pos = x_index + 1; pos < 8; pos++) {
-			if (board[pos][y_index] == board[x_index][y_index]) {
-				counts[board[pos][y_index]]++;
-				board[pos][y_index] = Void;
-			}
-			else break;
-		}
+	for (int pos = x_index - 1; pos >= 0; pos--) {
+	if (board[pos][y_index] == board[x_index][y_index]) {
+	counts[board[pos][y_index]]++;
+	board[pos][y_index] = Void;
+	}
+	else break;
+	}
+	for (int pos = x_index + 1; pos < 8; pos++) {
+	if (board[pos][y_index] == board[x_index][y_index]) {
+	counts[board[pos][y_index]]++;
+	board[pos][y_index] = Void;
+	}
+	else break;
+	}
 	}
 	if ((count_y_direction > 2)) {
-		for (int pos = y_index - 1; pos >= 0; pos--) {
-			if (board[x_index][pos] == board[x_index][y_index]) {
-				counts[board[x_index][pos]]++;
-				board[x_index][pos] = Void;
-			}
-			else break;
-		}
-		for (int pos = y_index + 1; pos < 8; pos++) {
-			if (board[x_index][pos] == board[x_index][y_index]) {
-				counts[board[x_index][pos]]++;
-				board[x_index][pos] = Void;
-			}
-			else break;
-		}
+	for (int pos = y_index - 1; pos >= 0; pos--) {
+	if (board[x_index][pos] == board[x_index][y_index]) {
+	counts[board[x_index][pos]]++;
+	board[x_index][pos] = Void;
+	}
+	else break;
+	}
+	for (int pos = y_index + 1; pos < 8; pos++) {
+	if (board[x_index][pos] == board[x_index][y_index]) {
+	counts[board[x_index][pos]]++;
+	board[x_index][pos] = Void;
+	}
+	else break;
+	}
 	}*/
 	/*if (count_x_direction > 2 || count_y_direction > 2) {
-		counts[board[x_index][y_index]]++;
-		board[x_index][y_index] = Void;
+	counts[board[x_index][y_index]]++;
+	board[x_index][y_index] = Void;
 	}*/
 	if ((count_x_direction > 2 && count_y_direction > 2) || count_x_direction > 4 || count_y_direction > 4) {
 		if (count_x_direction > 2) {
@@ -327,31 +343,33 @@ bool GameBoard::has_bomb(int x_index, int y_index) {
 }
 
 void GameBoard::fall() {
-	/*for (int j = 0; j < 8; j++) {
-		int numVoid = 0;
-		for (int i = 7; i >= 0; i--) {
-			if (board[i][j] == Void) numVoid++;
-		}
-		for (int i = 7; i > 0; i--) {
-			if (numVoid == 0) break;
-			if (board[i][j] == Void) {
-				numVoid--;
-				for (int k = i - 1; k >= 0; k--) {
-					board[k + 1][j] = board[k][j];
-					board[k][j] = Void;
-				}
-				if (board[i][j] == Void) i++;
-			}
-		}
-	}*/
-	int toBe[8];
-	int pos[8];
-	for (int i : pos) i = 7;
+	/*
+	for (int j = 0; j < 8; j++) {
+	int numVoid = 0;
+	for (int i = 7; i >= 0; i--) {
+	if (board[i][j] == Void) numVoid++;
+	}
+	for (int i = 7; i > 0; i--) {
+	if (numVoid == 0) break;
+	if (board[i][j] == Void) {
+	numVoid--;
+	for (int k = i - 1; k >= 0; k--) {
+	board[k + 1][j] = board[k][j];
+	board[k][j] = Void;
+	}
+	if (board[i][j] == Void) i++;
+	}
+	}
+	}
+	*/
+	
+	vector<int> toBe(8,0);
+	vector<int> pos(8,7);
 	//list<int> toBeHelper[8];
 	for (int j = 0; j < 8; j++) {
 		for (int i = 7; i >= 0; i--) {
-			if (board[i][j] == Void) { 
-				toBe[j]++; 
+			if (board[i][j] == Void) {
+				toBe[j]++;
 				//toBeHelper[j].push_back(i);
 			}
 		}
@@ -370,13 +388,15 @@ void GameBoard::fall() {
 							board[k + 1][j] = board[k][j];
 							board[k][j] = Void;
 						}
-						if (board[pos[j][j]] != Void) pos[j]--;
+						if (board[pos[j]][j] != Void) pos[j]--;
 						break;
 					}
+					pos[j]--;
 				}
 			}
 		}
 	}
+	
 }
 
 void GameBoard::update_damage() {
@@ -387,34 +407,31 @@ void GameBoard::update_damage() {
 	}
 	temp_damage -= counts[Health] * 5;
 	temp_damage -= counts[Power] * 5;
-	attacking_player->setHp(attacking_player->getHp() + counts[Health] * 5);
-	attacking_player->setMp(attacking_player->getMp() + counts[Power]);
-	while (attacking_player->getMp() >= 10) {
-		attacking_player->setMp(attacking_player->getMp() - 10);
-		temp_damage += 100;
+	temp_damage -= counts[Shield] * 5;
+	if (counts[Shield] > 0) {
+		attacking_player->hasShield = true;
 	}
+	
 	damage = temp_damage;
 }
 
 bool GameBoard::either_is_dead() {
-	if (defending_player->hasShield) {
-		
-		if (attacking_player->getHp() <= damage) {
-			loser = attacking_player;
-			return true;
-		}
-		return false;
+	if (first_player->getHp() <= 0) {
+		loser = first_player;
 	}
-	else {
-		if (defending_player->getHp() <= damage) {
-			loser = defending_player;
-			return true;
-		}
-		return false;
+	if (second_player->getHp() <= 0) {
+		loser = second_player;
 	}
+	return first_player->getHp() <= 0 || second_player->getHp() <= 0;
 }
 
 void GameBoard::make_damage() {
+	attacking_player->setHp(attacking_player->getHp() + counts[Health] * 5);
+	attacking_player->setMp(attacking_player->getMp() + counts[Power]);
+	while (attacking_player->getMp() >= 10) {
+		attacking_player->setMp(attacking_player->getMp() - 10);
+		damage += 100;
+	}
 	if (defending_player->hasShield) {
 		attacking_player->setHp(attacking_player->getHp() - damage);
 	}
@@ -427,8 +444,7 @@ void GameBoard::make_damage() {
 
 void GameBoard::display_result() {
 	loser->setHp(0);
-	cout << "loser is " << (loser == first_player) ? "first player" : "second player";
-	cout << endl;
+	cout << "loser is " << ((loser == first_player) ? "first player" : "second player") << endl;
 }
 
 void GameBoard::generate_elements() {
@@ -455,6 +471,7 @@ void GameBoard::switch_blocks() {
 	board[x_index1][y_index1] = board[x_index2][y_index2];
 	board[x_index2][y_index2] = temp;
 	x_index1 = -1;
+	x_index2 = -1;
 }
 
 void GameBoard::cancel_helper(int x_index, int y_index) {
@@ -518,8 +535,8 @@ void GameBoard::cancel_helper(int x_index, int y_index) {
 				counts[board[pos][y_index]]++;
 				board[pos][y_index] = Void;
 			}
-		else break;
-	}
+			else break;
+		}
 		for (int pos = x_index + 1; pos < 8; pos++) {
 			if (board[pos][y_index] == board[x_index][y_index]) {
 				counts[board[pos][y_index]]++;
@@ -534,7 +551,7 @@ void GameBoard::cancel_helper(int x_index, int y_index) {
 				counts[board[x_index][pos]]++;
 				board[x_index][pos] = Void;
 			}
-		else break;
+			else break;
 		}
 		for (int pos = y_index + 1; pos < 8; pos++) {
 			if (board[x_index][pos] == board[x_index][y_index]) {
@@ -569,3 +586,6 @@ bool GameBoard::trigger_cancelation() {
 	return result;
 }
 
+void GameBoard::return_hps() {
+	cout << first_player->getHp() << " " << second_player->getHp() << endl;
+}

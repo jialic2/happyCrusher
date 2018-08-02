@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <string>
 using namespace std;
 
 enum Element {
@@ -17,7 +18,7 @@ class GameBoard {
 	Person* defending_player;
 	Person* loser;
 
-	int x_index1 = -1, y_index1, x_index2, y_index2;
+	
 	int damage = 0;
 
 	vector<int> counts = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -29,11 +30,18 @@ class GameBoard {
 
 public:
 
+	int x_index1 = -1, y_index1, x_index2 = -1, y_index2;
+	bool is_horizontal_ajacent = false;
+
 	bool cancel();
 	void fall();
+
 	vector<vector<int>> board;
+	vector<vector<int>> draw_board;
+
 	GameBoard();
 	void construct_board();
+	void construct_draw_board();
 	bool isBigEnough(int x_index, int y_index);
 	bool receive_indices(int x_index, int y_index);
 	void switch_players();
@@ -45,4 +53,6 @@ public:
 	void display_result();
 	void switch_blocks();
 	bool trigger_cancelation();
+
+	void return_hps();
 };

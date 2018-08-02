@@ -12,14 +12,35 @@ void ofApp::update(){
 		cancel_counter--;
 		if (cancel_counter == 0) {
 			current_state = Fall;
+			current_board.construct_helper_vectors();
+			current_board.draw_board = current_board.board;
+			columns = current_board.fall_one_block();
 			cancel_counter = 15;
 		}
 	}
 	else if (current_state == Fall) {
-		current_board.fall();
-		current_board.generate_elements();
-		current_board.update_damage();
-		current_state = In_Progress;
+		// current_board.fall();
+		fall_counter--;
+		if (fall_counter == 0) {
+			bool fall_is_done = true;
+			for (int i = 0; i < 8; i++) {
+				if (columns[i] == true) {
+					fall_is_done = false;
+					break;
+				}
+			}
+			if (fall_is_done) {
+				current_board.generate_elements();
+				current_board.update_damage();
+				current_board.draw_board = current_board.board;
+				current_state = In_Progress;
+				fall_counter = 15;
+				return;
+			}
+			fall_counter = 15;
+			current_board.draw_board = current_board.board;
+			columns = current_board.fall_one_block();
+		}
 	}
 	else if (current_state == In_Progress) {
 		current_board.draw_board = current_board.board;
@@ -116,6 +137,9 @@ void ofApp::draw(){
 	}
 	else if (current_state == Cancel) {
 		drawCancel();
+	}
+	else if (current_state == Fall) {
+		drawFall();
 	}
 	//draw board
 	//draw players + info
@@ -217,7 +241,16 @@ void ofApp::drawCancel() {
 }
 
 void ofApp::drawFall() {
-
+	for (int i = 0; i < 8; i++) {
+		if (columns[i] == true) {
+			ofSetHexColor(colors[Void]);
+			ofDrawRectangle(260 + i * 60, 260, 60, current_board.pos[i] * 60);
+			for (int j = 0, n = current_board.pos[i]; j < n; j++) {
+				ofSetHexColor(colors[current_board.draw_board[j][i]]);
+				ofDrawRectangle(260 + i * 60, 260 + j * 60 + 60 - 4 * fall_counter, 60, 60);
+			}
+		}
+	}
 }
 
 void ofApp::drawBoard() {

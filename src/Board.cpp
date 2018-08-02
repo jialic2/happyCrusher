@@ -400,6 +400,42 @@ void GameBoard::fall() {
 	
 }
 
+void GameBoard::construct_helper_vectors() {
+	toBe = vector<int>(8, 0);
+	pos = vector<int>(8, 7);
+	for (int j = 0; j < 8; j++) {
+		for (int i = 7; i >= 0; i--) {
+			if (board[i][j] == Void) {
+				toBe[j]++;
+				//toBeHelper[j].push_back(i);
+			}
+		}
+	}
+}
+
+vector<bool> GameBoard::fall_one_block() {
+	vector<bool> result(8, false);
+	for (int j = 0; j < 8; j++) {
+		if (toBe[j] == 0) continue;
+		else {
+			toBe[j]--;
+			result[j] = true;
+			while (pos[j] > 0) {
+				if (board[pos[j]][j] == Void) {
+					for (int k = pos[j] - 1; k >= 0; k--) {
+						board[k + 1][j] = board[k][j];
+						board[k][j] = Void;
+					}
+					if (board[pos[j]][j] != Void) pos[j]--;
+					break;
+				}
+				pos[j]--;
+			}
+		}
+	}
+	return result;
+}
+
 void GameBoard::update_damage() {
 	int temp_damage = 0;
 	for (int i : counts) {

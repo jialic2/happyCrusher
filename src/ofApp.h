@@ -11,6 +11,10 @@ class ofApp : public ofBaseApp {
 	int delay_counter = 18;
 	int switch_counter = 15;
 	int cancel_counter = 15;
+	int fall_counter = 15;
+
+	vector<bool> columns;
+
 	bool switch_flag = false;
 	bool bomb_flag = false;
 	int temp_x1, temp_y1, temp_x2, temp_y2;

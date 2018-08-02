@@ -18,7 +18,6 @@ class GameBoard {
 	Person* defending_player;
 	Person* loser;
 
-	
 	int damage = 0;
 
 	vector<int> counts = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -38,6 +37,8 @@ public:
 
 	vector<vector<int>> board;
 	vector<vector<int>> draw_board;
+	vector<int> toBe;
+	vector<int> pos;
 
 	GameBoard();
 	void construct_board();
@@ -53,6 +54,7 @@ public:
 	void display_result();
 	void switch_blocks();
 	bool trigger_cancelation();
-
+	void construct_helper_vectors();
+	vector<bool> fall_one_block();
 	void return_hps();
 };

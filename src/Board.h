@@ -18,10 +18,11 @@ class GameBoard {
 	Person* defending_player;
 	Person* loser;
 
-	
 	int damage = 0;
 
 	vector<int> counts = {0, 0, 0, 0, 0, 0, 0, 0};
+	vector<int> toBe;
+	vector<int> pos;
 
 	int randomElement();
 	void initialize_players();
@@ -42,6 +43,8 @@ public:
 	GameBoard();
 	void construct_board();
 	void construct_draw_board();
+	void construct_helper_vectors();
+	vector<bool> fall_one_block();
 	bool isBigEnough(int x_index, int y_index);
 	bool receive_indices(int x_index, int y_index);
 	void switch_players();

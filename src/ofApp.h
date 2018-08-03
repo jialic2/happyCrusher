@@ -4,7 +4,7 @@
 #include "Board.h"
 
 enum GameState {
-	In_Progress, Selecting_Indices, Result, Switch, Cancel, Fall, DrawBomb
+	In_Progress, Selecting_Indices, Result, Switch, Cancel, Fall, Generate, Refresh
 };
 
 class ofApp : public ofBaseApp {
@@ -12,6 +12,8 @@ class ofApp : public ofBaseApp {
 	int switch_counter = 15;
 	int cancel_counter = 15;
 	int fall_counter = 15;
+	int generate_counter = 15;
+	int refresh_counter = 15;
 
 	vector<bool> columns;
 
@@ -34,6 +36,8 @@ class ofApp : public ofBaseApp {
 		void drawFall();
 		void drawBoard();
 		void drawSelection();
+		void drawGenerate();
+		void drawRefresh();
 
 		void mousePressed(int x, int y, int button);
 };

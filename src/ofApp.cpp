@@ -18,6 +18,21 @@ void ofApp::update(){
 			cancel_counter = 15;
 		}
 	}
+	else if (current_state == Refresh) {
+		refresh_counter--;
+		if (refresh_counter == 0) {
+			current_state = Selecting_Indices;
+			refresh_counter = 15;
+		}
+	}
+	else if (current_state == Generate) {
+		generate_counter--;
+		if (generate_counter == 0) {
+			current_board.draw_board = current_board.board;
+			generate_counter = 15;
+			current_state = In_Progress;
+		}
+	}
 	else if (current_state == Fall) {
 		// current_board.fall();
 		fall_counter--;
@@ -30,10 +45,10 @@ void ofApp::update(){
 				}
 			}
 			if (fall_is_done) {
+				current_board.draw_board = current_board.board;
 				current_board.generate_elements();
 				current_board.update_damage();
-				current_board.draw_board = current_board.board;
-				current_state = In_Progress;
+				current_state = Generate;
 				fall_counter = 15;
 				return;
 			}
@@ -80,6 +95,7 @@ void ofApp::update(){
 		//if cannot make a move, contruct a new board
 		//TO-DO: ¶¯»­Ð§¹û
 		while (!current_board.can_make_move()) {
+			current_state = Refresh;
 			current_board.construct_board();
 			current_board.draw_board = current_board.board;
 		}
@@ -115,7 +131,7 @@ void ofApp::update(){
 			else {
 				switch_flag = false;
 				switch_counter = 15;
-				current_state = Cancel;
+				current_state = In_Progress;
 			}
 		}
 	}
@@ -127,7 +143,22 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw() {
+	vector<int> properties = current_board.return_hps_mps_shields();
+	string message = "HP: " + std::to_string(properties[0]);
+	ofSetColor(0, 0, 0);
+	ofDrawBitmapString(message, 100, 260);
+	message = "MP: " + std::to_string(properties[1]);
+	ofDrawBitmapString(message, 100, 300);
+	message = "HasShield: " + std::to_string(properties[4] == 1);
+	ofDrawBitmapString(message, 100, 340);
+	message = "HP: " + std::to_string(properties[2]);
+	ofSetColor(0, 0, 0);
+	ofDrawBitmapString(message, 810, 260);
+	message = "MP: " + std::to_string(properties[3]);
+	ofDrawBitmapString(message, 810, 300);
+	message = "HasShield: " + std::to_string(properties[5]);
+	ofDrawBitmapString(message, 810, 340);
 	drawBoard();
 	if (current_state == Selecting_Indices) {
 		drawSelection();
@@ -140,6 +171,12 @@ void ofApp::draw(){
 	}
 	else if (current_state == Fall) {
 		drawFall();
+	}
+	else if (current_state == Generate) {
+		drawGenerate();
+	}
+	else if (current_state == Refresh) {
+		drawRefresh();
 	}
 	//draw board
 	//draw players + info
@@ -154,7 +191,6 @@ void ofApp::mousePressed(int x, int y, int button){
 			if (current_board.x_index1 != -1 && current_board.x_index2 != -1) {
 				return;
 			}
-			cout << "mouse_pressed" << endl;
 			int x_index = (x - 260) / 60;
 			int y_index = (y - 260) / 60;
 			current_board.receive_indices(y_index, x_index);
@@ -244,11 +280,41 @@ void ofApp::drawFall() {
 	for (int i = 0; i < 8; i++) {
 		if (columns[i] == true) {
 			ofSetHexColor(colors[Void]);
-			ofDrawRectangle(260 + i * 60, 260, 60, current_board.pos[i] * 60);
+			ofDrawRectangle(260 + i * 60, 260, 60, current_board.pos[i] * 60 + 60);
 			for (int j = 0, n = current_board.pos[i]; j < n; j++) {
 				ofSetHexColor(colors[current_board.draw_board[j][i]]);
 				ofDrawRectangle(260 + i * 60, 260 + j * 60 + 60 - 4 * fall_counter, 60, 60);
 			}
+		}
+	}
+}
+
+void ofApp::drawGenerate() {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (current_board.draw_board[i][j] == Void) {
+				ofSetHexColor(colors[Void]);
+				ofDrawRectangle(260 + j * 60, 260 + i * 60, 60, 60);
+				ofSetHexColor(colors[current_board.board[i][j]]);
+				ofDrawRectangle(260 + j * 60 + 2 * generate_counter,
+					260 + i * 60 + 2 * generate_counter,
+					4 * (15 - generate_counter),
+					4 * (15 - generate_counter));
+			}
+		}
+	}
+}
+
+void ofApp::drawRefresh() {
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			int left = 260 + j * 60;
+			int up = 260 + i * 60;
+			ofSetHexColor(colors[Void]);
+			ofDrawRectangle(left, up, 60, 60);
+			ofSetHexColor(colors[current_board.board[i][j]]);
+			ofDrawRectangle(left + 2 * refresh_counter, up + 2 * refresh_counter, 
+				60 - 4 * refresh_counter, 60 - 4 * refresh_counter);
 		}
 	}
 }

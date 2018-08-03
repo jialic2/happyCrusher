@@ -57,4 +57,5 @@ public:
 	void construct_helper_vectors();
 	vector<bool> fall_one_block();
 	void return_hps();
+	vector<int> return_hps_mps_shields();
 };

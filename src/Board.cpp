@@ -161,7 +161,6 @@ bool GameBoard::can_make_move() { // this line should be commented
 }
 
 bool GameBoard::receive_indices(int x_index, int y_index) {
-	cout << x_index << " " << y_index << endl;
 	if (x_index1 == -1) {
 		x_index1 = x_index;
 		y_index1 = y_index;
@@ -426,7 +425,6 @@ vector<bool> GameBoard::fall_one_block() {
 						board[k + 1][j] = board[k][j];
 						board[k][j] = Void;
 					}
-					if (board[pos[j]][j] != Void) pos[j]--;
 					break;
 				}
 				pos[j]--;
@@ -625,4 +623,15 @@ bool GameBoard::trigger_cancelation() {
 
 void GameBoard::return_hps() {
 	cout << first_player->getHp() << " " << second_player->getHp() << endl;
+}
+
+vector<int> GameBoard::return_hps_mps_shields() {
+	vector<int> output;
+	output.push_back(first_player->getHp());
+	output.push_back(first_player->getMp());
+	output.push_back(second_player->getHp());
+	output.push_back(second_player->getMp());
+	output.push_back(first_player->hasShield);
+	output.push_back(second_player->hasShield);
+	return output;
 }

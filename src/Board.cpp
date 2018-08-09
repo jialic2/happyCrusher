@@ -169,11 +169,23 @@ bool GameBoard::receive_indices(int x_index, int y_index) {
 	else {
 		if (((x_index == x_index1 - 1 || x_index == x_index1 + 1) && y_index == y_index1)
 			|| (y_index == y_index1 - 1 || y_index == y_index1 + 1) && x_index == x_index1) {
-			//two blocks are ajacent
-			x_index2 = x_index;
-			y_index2 = y_index;
-			is_horizontal_ajacent = x_index1 == x_index2;
-			return true;
+			draw_board = board;
+			int temp = board[x_index1][y_index1];
+			board[x_index1][y_index1] = board[x_index][y_index];
+			board[x_index][y_index] = temp;
+			if (isBigEnough(x_index1, y_index1) || isBigEnough(x_index, y_index)) {
+				x_index2 = x_index;
+				y_index2 = y_index;
+				is_horizontal_ajacent = x_index1 == x_index2;
+				board = draw_board;
+				return true;
+			}
+			else {
+				x_index1 = x_index;
+				y_index1 = y_index;
+				board = draw_board;
+				return false;
+			}
 		}
 		else {
 			x_index1 = x_index;

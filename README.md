@@ -1,6 +1,4 @@
-# happyCrusher
-# Conway's Game of Life (CS126 SP18 Final Project)
-
+# HappyCrusher
 ## Getting Started
 This part mainly focuses on helping you setting up a copy of the project on your local machine.
 ### Prerequisites
